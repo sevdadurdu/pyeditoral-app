@@ -34,6 +34,3 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG . -f ./Dockerfile.prod
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker build -t $ECR_REGISTRY/nginx:$IMAGE_TAG . -f ./nginx/Dockerfile
-          docker tag $ECR_REGISTRY/nginx:$IMAGE_TAG $ECR_REGISTRY/nginx:latest
-          docker push $ECR_REGISTRY/nginx:latest
