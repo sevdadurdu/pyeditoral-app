@@ -1,0 +1,52 @@
+name: Deploy to ECS
+
+on:
+  issue_comment:
+    types:
+      - created
+env:
+  AWS_REGION: "eu-west-1"
+  ECR_REPOSITORY: pyeditoral
+  ECS_SERVICE: pyeditoral
+  ECS_CLUSTER: pyeditoral
+  ECS_TASK_DEFINITION: pyeditoral-app 
+  CONTAINER_NAME: pyeditoral-app 
+permissions:
+ contents: read
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Download task definition
+        run: |
+            aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} \
+            --query taskDefinition > task-definition.json
+      - name: Render task definiton
+        id: pyeditoral-app
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: 572384340159.dkr.ecr.eu-west-1.amazonaws.com/pyeditoral:latest
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
