@@ -9,3 +9,5 @@ python-memcached==1.59
 pytz==2020.4
 six==1.15.0
 sqlparse==0.4.4
+gunicorn==21.2.0
+psycopg2==2.9.9

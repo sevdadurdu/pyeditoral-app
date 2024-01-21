@@ -1,13 +1,21 @@
-FROM python:3.9
+FROM python:3.9-alpine
 
-WORKDIR /app
-COPY . .
+WORKDIR /usr/src/app
 
-# install requirements
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN apk update \
+    && apk add postgresql-dev gcc python3-dev musl-dev
+
+RUN pip install --upgrade pip
+COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
-# migrations
-RUN python manage.py makemigrations content
-RUN python manage.py migrate
-# static
-RUN python manage.py collectstatic --noinput
+COPY ./entrypoint.sh .
+
+RUN chmod +x entrypoint.sh
+
+COPY . .
+
+ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]

@@ -150,3 +150,7 @@ cython_debug/
 
 # DB
 db.sqlite3
+
+.DS_STORE
+
+.terraform
