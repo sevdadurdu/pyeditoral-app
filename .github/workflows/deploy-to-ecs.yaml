@@ -35,18 +35,18 @@ jobs:
             aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} \
             --query taskDefinition > task-definition.json
       - name: Render task definiton
-        id: pyeditoral-app
+        id: pyeditoral-app-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         with:
           task-definition: task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
-          image: 572384340159.dkr.ecr.eu-west-1.amazonaws.com/pyeditoral:latest
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: task-definition.json
+          task-definition: ${{ steps.pyeditoral-app-task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
