@@ -91,6 +91,7 @@ DATABASES = {
     }
 }
 
+
 # If you need to use Postgresql, you can use this section
 # DATABASES = {
 #     'default': {
