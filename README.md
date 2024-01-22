@@ -24,6 +24,8 @@ docker-compose up [-d]
 3. Go to  `http://127.0.0.1:8000/` or just type `localhost:8000` in your browser to use project
 ------------
 
+
+
 ### Architecture Diagram
 
 ![Architecture Diagram](./aws.drawio.png)
