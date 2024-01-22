@@ -76,8 +76,13 @@ resource "aws_alb_listener" "ecs_alb_https_listener" {
   depends_on        = [aws_alb_target_group.default_target_group]
 
   default_action {
-    type             = "forward"
-    target_group_arn = aws_alb_target_group.default_target_group.arn
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "NOT FOUND"
+      status_code  = "404"
+    }
   }
 }
 
